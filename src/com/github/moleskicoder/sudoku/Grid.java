@@ -3,7 +3,7 @@ package com.github.moleskicoder.sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Grid<T> {
+public class Grid<T> implements IGrid<T> {
 
     private final int width;
     private final int height;
@@ -15,19 +15,36 @@ public final class Grid<T> {
         this.values = new ArrayList<T>(this.height * this.width);
     }
 
-    public Integer numRows() {
+    public Grid(final int gridWidth, final int gridHeight, final T[] initial) {
+        this.width = gridWidth;
+        this.height = gridHeight;
+        this.values = new ArrayList<T>(this.height * this.width);
+        final int size = initial.length;
+        if (this.width * this.height != size) {
+            throw new IllegalArgumentException("initial array is the wrong size.");
+        }
+        for (int i = 0; i < size; ++i) {
+            this.values.set(i, initial[i]);
+        }
+    }
+
+    @Override
+    public final Integer getHeight() {
         return this.height;
     }
 
-    public Integer numCols() {
+    @Override
+    public final Integer getWidth() {
         return this.width;
     }
 
-    public void set(final int x, final int y, final T value) {
+    @Override
+    public final void set(final int x, final int y, final T value) {
         this.values.set(this.getOffset(x, y), value);
     }
 
-    public T get(final int x, final int y) {
+    @Override
+    public final T get(final int x, final int y) {
         return this.values.get(this.getOffset(x, y));
     }
 
