@@ -1,8 +1,5 @@
 package com.github.moleskicoder.sudoku;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Grid<T> implements IGrid<T> {
 
     private final int width;
@@ -35,7 +32,7 @@ public class Grid<T> implements IGrid<T> {
     }
 
     @Override
-    public void set(final int x, final int y, final T value) {
+    public final void set(final int x, final int y, final T value) {
         this.values[this.getOffset(x, y)] = value;
     }
 
@@ -45,14 +42,14 @@ public class Grid<T> implements IGrid<T> {
     }
 
     @Override
-    public T get(final int x, final int y) {
+    public final T get(final int x, final int y) {
         return this.values[this.getOffset(x, y)];
 
     }
 
     @Override
     public final String toString() {
-        final StringBuffer output = new StringBuffer();
+        final StringBuilder output = new StringBuilder();
         for (int y = 0; y < this.height; ++y) {
             for (int x = 0; x < this.width; ++x) {
                 final T number = this.get(x, y);

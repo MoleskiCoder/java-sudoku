@@ -24,7 +24,7 @@ public class Solver {
 
         final IGrid<Integer> puzzle = new SudokuGrid(data);
 
-        if (!solveSudoku(puzzle)) {
+        if (solveSudoku(puzzle)) {
             System.out.print(puzzle.toString());
         } else {
             System.out.println("No solution exists");
