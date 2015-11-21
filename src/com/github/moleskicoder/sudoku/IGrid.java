@@ -2,9 +2,11 @@ package com.github.moleskicoder.sudoku;
 
 public interface IGrid<T> {
 
-    Integer getHeight();
-    Integer getWidth();
+    int getHeight();
+    int getWidth();
 
-    void set(final int x, final int y, final T value);
-    T get(final int x, final int y);
+    void set(ICoordinate coordinate, T value);
+    void set(int x, int y, T value);
+    T get(ICoordinate coordinate);
+    T get(int x, int y);
 }

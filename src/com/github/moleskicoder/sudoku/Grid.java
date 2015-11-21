@@ -7,45 +7,69 @@ public class Grid<T> implements IGrid<T> {
 
     private final int width;
     private final int height;
-    private final List<T> values;
-
-    public Grid(final int gridWidth, final int gridHeight) {
-        this.width = gridWidth;
-        this.height = gridHeight;
-        this.values = new ArrayList<T>(this.height * this.width);
-    }
+    private final T[] values;
 
     public Grid(final int gridWidth, final int gridHeight, final T[] initial) {
         this.width = gridWidth;
         this.height = gridHeight;
-        this.values = new ArrayList<T>(this.height * this.width);
+        this.values = initial;
         final int size = initial.length;
         if (this.width * this.height != size) {
             throw new IllegalArgumentException("initial array is the wrong size.");
         }
-        for (int i = 0; i < size; ++i) {
-            this.values.set(i, initial[i]);
-        }
     }
 
     @Override
-    public final Integer getHeight() {
+    public final int getHeight() {
         return this.height;
     }
 
     @Override
-    public final Integer getWidth() {
+    public final int getWidth() {
         return this.width;
     }
 
     @Override
-    public final void set(final int x, final int y, final T value) {
-        this.values.set(this.getOffset(x, y), value);
+    public final void set(final ICoordinate coordinate, final T value) {
+        this.values[this.getOffset(coordinate)] = value;
     }
 
     @Override
-    public final T get(final int x, final int y) {
-        return this.values.get(this.getOffset(x, y));
+    public void set(final int x, final int y, final T value) {
+        this.values[this.getOffset(x, y)] = value;
+    }
+
+    @Override
+    public final T get(final ICoordinate coordinate) {
+        return this.values[this.getOffset(coordinate)];
+    }
+
+    @Override
+    public T get(final int x, final int y) {
+        return this.values[this.getOffset(x, y)];
+
+    }
+
+    @Override
+    public final String toString() {
+        final StringBuffer output = new StringBuffer();
+        for (int y = 0; y < this.height; ++y) {
+            for (int x = 0; x < this.width; ++x) {
+                final T number = this.get(x, y);
+                if (number == null) {
+                    output.append("  ");
+                } else {
+                    output.append(number.toString());
+                    output.append(' ');
+                }
+            }
+            output.append('\n');
+        }
+        return output.toString();
+    }
+
+    private int getOffset(final ICoordinate coordinate) {
+        return this.getOffset(coordinate.getX(), coordinate.getY());
     }
 
     private int getOffset(final int x, final int y) {

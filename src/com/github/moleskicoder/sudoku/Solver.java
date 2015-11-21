@@ -8,6 +8,29 @@ package com.github.moleskicoder.sudoku;
  */
 public class Solver {
 
+    public static void main(final String[] args) {
+
+        final Integer[] data = {
+            3, 0, 6, 5, 0, 8, 4, 0, 0,
+            5, 2, 0, 0, 0, 0, 0, 0, 0,
+            0, 8, 7, 0, 0, 0, 0, 3, 1,
+            0, 0, 3, 0, 1, 0, 0, 8, 0,
+            9, 0, 0, 8, 6, 3, 0, 0, 5,
+            0, 5, 0, 0, 9, 0, 6, 0, 0,
+            1, 3, 0, 0, 0, 0, 2, 5, 0,
+            0, 0, 0, 0, 0, 0, 0, 7, 4,
+            0, 0, 5, 2, 0, 6, 3, 0, 0
+        };
+
+        final IGrid<Integer> puzzle = new SudokuGrid(data);
+
+        if (!solveSudoku(puzzle)) {
+            System.out.print(puzzle.toString());
+        } else {
+            System.out.println("No solution exists");
+        }
+    }
+
     /*
      * Function: solveSudoku
      * ---------------------
@@ -23,18 +46,17 @@ public class Solver {
      * decision point.
      */
     public static boolean solveSudoku(final IGrid<Integer> grid) {
-        final Integer row = null;
-        final Integer column = null;
-        if (!findUnassignedLocation(grid, row, column)) {
+        final ICoordinate coordinate = new Coordinate();
+        if (!findUnassignedLocation(grid, coordinate)) {
             return true; // success!
         }
-        for (int num = 1; num <= 9; num++) { // consider digits 1 to 9
-            if (isConflicted(grid, row, column, num)) { // if looks promising,
-                grid.set(row, column, num); // make tentative assignment
+        for (int number = 1; number <= 9; number++) { // consider digits 1 to 9
+            if (isConflicted(grid, coordinate, number)) { // if looks promising,
+                grid.set(coordinate, number); // make tentative assignment
                 if (solveSudoku(grid)) {
                     return true; // recur, if success, yay!
                 }
-                grid.set(row, column, null); // failure, unmake & try again
+                grid.set(coordinate, SudokuGrid.UNASSIGNED); // failure, unmake & try again
             }
         }
         return false; // this triggers backtracking
@@ -48,12 +70,13 @@ public class Solver {
      * unassigned, and true is returned. If no unassigned entries remain, false
      * is returned.
      */
-    public static boolean findUnassignedLocation(final IGrid<Integer> grid, Integer row, Integer column) {
+    public static boolean findUnassignedLocation(final IGrid<Integer> grid, final ICoordinate coordinate) {
         final int numberOfRows = grid.getHeight();
-        for (row = 0; row < numberOfRows; ++row) {
+        for (int row = 0; row < numberOfRows; ++row) {
             final Integer numberOfColumns = grid.getWidth();
-            for (column = 0; column < numberOfColumns; ++column) {
-                if (grid.get(row, column) == null) {
+            for (int column = 0; column < numberOfColumns; ++column) {
+                if (grid.get(column, row) == SudokuGrid.UNASSIGNED) {
+                    coordinate.set(column, row);
                     return true;
                 }
             }
@@ -67,7 +90,9 @@ public class Solver {
  * number to the given row,column location. As assignment is legal if it that
  * number is not already used in the row, column, or box.
  */
-    public static boolean isConflicted(final IGrid<Integer> grid, final int row, final int column, final int number) {
+    public static boolean isConflicted(final IGrid<Integer> grid, final ICoordinate coordinate, final int number) {
+        final int column = coordinate.getX();
+        final int row = coordinate.getY();
         return !isUsedInRow(grid, row, number)
             && !isUsedInColumn(grid, column, number)
             && !isUsedInBox(grid, row - row % 3, column - column % 3, number);
@@ -82,7 +107,7 @@ public class Solver {
     public static boolean isUsedInRow(final IGrid<Integer> grid, final int row, final int number) {
         final Integer numberOfColumns = grid.getWidth();
         for (int column = 0; column < numberOfColumns; column++) {
-            if (grid.get(row, column) == number) {
+            if (grid.get(column, row) == number) {
                 return true;
             }
         }
@@ -98,7 +123,7 @@ public class Solver {
     static boolean isUsedInColumn(final IGrid<Integer> grid, final int column, final int number) {
         final int numberOfRows = grid.getHeight();
         for (int row = 0; row < numberOfRows; row++) {
-            if (grid.get(row, column) == number) {
+            if (grid.get(column, row) == number) {
                 return true;
             }
         }
@@ -114,7 +139,7 @@ public class Solver {
     static boolean isUsedInBox(final IGrid<Integer> grid, final int boxStartRow, final int boxStartColumn, final int number) {
         for (int row = 0; row < 3; ++row) {
             for (int column = 0; column < 3; ++column) {
-                if (grid.get(row + boxStartRow, column + boxStartColumn) == number) {
+                if (grid.get(column + boxStartColumn, row + boxStartRow) == number) {
                     return true;
                 }
             }
