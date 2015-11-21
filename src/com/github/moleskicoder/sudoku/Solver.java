@@ -24,8 +24,16 @@ public class Solver {
 
         final IGrid<Integer> puzzle = new SudokuGrid(data);
 
-        if (solveSudoku(puzzle)) {
+        final long start = System.currentTimeMillis();
+        final boolean solved = solveSudoku(puzzle);
+        final long finish = System.currentTimeMillis();
+
+        if (solved) {
             System.out.print(puzzle.toString());
+
+            final long elapsed = finish - start;
+
+            System.out.format("\n\nTime taken %d.%03d seconds\n", elapsed / 1000, elapsed % 1000);
         } else {
             System.out.println("No solution exists");
         }
