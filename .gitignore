@@ -1,0 +1,6 @@
+/out
+/target
+*~
+*.swp
+/.idea
+/*.iml
