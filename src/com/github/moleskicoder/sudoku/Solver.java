@@ -29,11 +29,11 @@ public class Solver {
         final long finish = System.currentTimeMillis();
 
         if (solved) {
-            System.out.print(puzzle.toString());
+            System.out.print(puzzle);
 
             final long elapsed = finish - start;
 
-            System.out.format("\n\nTime taken %d.%03d seconds\n", elapsed / 1000, elapsed % 1000);
+            System.out.format("\n\nTime taken %d.%03d seconds\n", elapsed / 1000L, elapsed % 1000L);
         } else {
             System.out.println("No solution exists");
         }

@@ -56,7 +56,7 @@ public class Grid<T> implements IGrid<T> {
                 if (number == null) {
                     output.append("  ");
                 } else {
-                    output.append(number.toString());
+                    output.append(number);
                     output.append(' ');
                 }
             }
