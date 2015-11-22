@@ -17,9 +17,10 @@ public final class Game {
         };
 
         final IGrid<Integer> puzzle = new SudokuGrid(data);
+        final ISolver solver = new Solver(puzzle);
 
         final long start = System.currentTimeMillis();
-        final boolean solved = Solver.solveSudoku(puzzle);
+        final boolean solved = solver.solve();
         final long finish = System.currentTimeMillis();
 
         if (solved) {
