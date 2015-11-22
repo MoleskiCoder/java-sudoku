@@ -35,7 +35,7 @@ public final class Solver implements ISolver {
         if (!this.findUnassignedLocation(coordinate)) {
             return true; // success!
         }
-        for (int number = 1; number <= 9; number++) { // consider digits 1 to 9
+        for (int number = 1; number < 10; ++number) { // consider digits 1 to 9
             if (this.isAvailable(coordinate, number)) { // if looks promising,
                 this.grid.set(coordinate, number); // make tentative assignment
                 if (this.solve()) {
