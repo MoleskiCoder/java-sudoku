@@ -9,7 +9,7 @@ public class Grid<T> implements IGrid<T> {
     public Grid(final int gridWidth, final int gridHeight, final T[] initial) {
         this.width = gridWidth;
         this.height = gridHeight;
-        this.values = initial;
+        this.values = initial.clone();
         final int size = initial.length;
         if (this.width * this.height != size) {
             throw new IllegalArgumentException("initial array is the wrong size.");
