@@ -28,7 +28,7 @@ public class Solver {
             return true; // success!
         }
         for (int number = 1; number <= 9; number++) { // consider digits 1 to 9
-            if (isConflicted(grid, coordinate, number)) { // if looks promising,
+            if (isAvailable(grid, coordinate, number)) { // if looks promising,
                 grid.set(coordinate, number); // make tentative assignment
                 if (solveSudoku(grid)) {
                     return true; // recur, if success, yay!
@@ -61,13 +61,13 @@ public class Solver {
         return false;
     }
 /*
- * Function: isConflicted
+ * Function: isAvailable
  * ---------------------
  * Returns a boolean which indicates whether it will be legal to assign
  * number to the given row,column location. As assignment is legal if it that
  * number is not already used in the row, column, or box.
  */
-    public static boolean isConflicted(final IGrid<Integer> grid, final ICoordinate coordinate, final int number) {
+    public static boolean isAvailable(final IGrid<Integer> grid, final ICoordinate coordinate, final int number) {
         final int column = coordinate.getX();
         final int row = coordinate.getY();
         return !isUsedInRow(grid, row, number)
