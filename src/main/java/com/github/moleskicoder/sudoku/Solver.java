@@ -9,9 +9,13 @@ package com.github.moleskicoder.sudoku;
 public final class Solver implements ISolver {
 
     private final IGrid<Integer> grid;
+    private final int width;
+    private final int height;
 
     public Solver(final IGrid<Integer> start) {
         this.grid = start;
+        this.width = this.grid.getWidth();
+        this.height = this.grid.getHeight();
     }
 
     /*
@@ -56,18 +60,18 @@ public final class Solver implements ISolver {
      * is returned.
      */
     private boolean findUnassignedLocation(final ICoordinate coordinate) {
-        final int numberOfRows = this.grid.getHeight();
-        for (int row = 0; row < numberOfRows; ++row) {
-            final Integer numberOfColumns = this.grid.getWidth();
-            for (int column = 0; column < numberOfColumns; ++column) {
-                if (this.grid.get(column, row) == SudokuGrid.UNASSIGNED) {
-                    coordinate.set(column, row);
+        for (int y = 0; y < this.height; ++y) {
+            coordinate.setY(y);
+            for (int x = 0; x < this.width; ++x) {
+                coordinate.setX(x);
+                if (this.grid.get(coordinate) == SudokuGrid.UNASSIGNED) {
                     return true;
                 }
             }
         }
         return false;
     }
+
 /*
  * Function: isAvailable
  * ---------------------
@@ -76,11 +80,11 @@ public final class Solver implements ISolver {
  * number is not already used in the row, column, or box.
  */
     private boolean isAvailable(final ICoordinate coordinate, final int number) {
-        final int column = coordinate.getX();
-        final int row = coordinate.getY();
-        return !this.isUsedInRow(row, number)
-            && !this.isUsedInColumn(column, number)
-            && !this.isUsedInBox(row - row % 3, column - column % 3, number);
+        final int x = coordinate.getX();
+        final int y = coordinate.getY();
+        return !this.isUsedInRow(y, number)
+            && !this.isUsedInColumn(x, number)
+            && !this.isUsedInBox(x - x % 3, y - y % 3, number);
     }
 
     /*
@@ -89,10 +93,9 @@ public final class Solver implements ISolver {
      * Returns a boolean which indicates whether any assigned entry
      * in the specified row matches the given number.
      */
-    private boolean isUsedInRow(final int row, final int number) {
-        final Integer numberOfColumns = this.grid.getWidth();
-        for (int column = 0; column < numberOfColumns; column++) {
-            if (this.grid.get(column, row) == number) {
+    private boolean isUsedInRow(final int y, final int number) {
+        for (int x = 0; x < this.width; ++x) {
+            if (this.grid.get(x, y) == number) {
                 return true;
             }
         }
@@ -105,10 +108,9 @@ public final class Solver implements ISolver {
      * Returns a boolean which indicates whether any assigned entry
      * in the specified column matches the given number.
      */
-    private boolean isUsedInColumn(final int column, final int number) {
-        final int numberOfRows = this.grid.getHeight();
-        for (int row = 0; row < numberOfRows; row++) {
-            if (this.grid.get(column, row) == number) {
+    private boolean isUsedInColumn(final int x, final int number) {
+        for (int y = 0; y < this.height; ++y) {
+            if (this.grid.get(x, y) == number) {
                 return true;
             }
         }
@@ -121,10 +123,10 @@ public final class Solver implements ISolver {
      * Returns a boolean which indicates whether any assigned entry
      * within the specified 3x3 box matches the given number.
      */
-    private boolean isUsedInBox(final int boxStartRow, final int boxStartColumn, final int number) {
-        for (int row = 0; row < 3; ++row) {
-            for (int column = 0; column < 3; ++column) {
-                if (this.grid.get(column + boxStartColumn, row + boxStartRow) == number) {
+    private boolean isUsedInBox(final int boxStartX, final int boxStartY, final int number) {
+        for (int y = 0; y < 3; ++y) {
+            for (int x = 0; x < 3; ++x) {
+                if (this.grid.get(x + boxStartX, y + boxStartY) == number) {
                     return true;
                 }
             }
