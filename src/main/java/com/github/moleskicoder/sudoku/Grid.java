@@ -47,24 +47,6 @@ public class Grid<T> implements IGrid<T> {
 
     }
 
-    @Override
-    public final String toString() {
-        final StringBuilder output = new StringBuilder();
-        for (int y = 0; y < this.height; ++y) {
-            for (int x = 0; x < this.width; ++x) {
-                final T number = this.get(x, y);
-                if (number == null) {
-                    output.append("  ");
-                } else {
-                    output.append(number);
-                    output.append(' ');
-                }
-            }
-            output.append('\n');
-        }
-        return output.toString();
-    }
-
     private int getOffset(final ICoordinate coordinate) {
         return this.getOffset(coordinate.getX(), coordinate.getY());
     }
