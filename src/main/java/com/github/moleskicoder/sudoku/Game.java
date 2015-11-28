@@ -27,10 +27,9 @@ public final class Game {
             System.out.print(puzzle);
 
             final long elapsed = finish - start;
+            final double seconds = (double)elapsed / 1000.0 + (double)(elapsed % 1000L) / 1000.0;
 
-            final double time = (double)elapsed / 1000.0 + (double)(elapsed % 1000L) / 1000.0;
-
-            System.out.format("\n\nTime taken %f seconds\n", time);
+            System.out.format("\n\nTime taken %f seconds\n", seconds);
         } else {
             System.out.println("No solution exists");
         }
