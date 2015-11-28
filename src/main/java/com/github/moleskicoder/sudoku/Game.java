@@ -28,7 +28,9 @@ public final class Game {
 
             final long elapsed = finish - start;
 
-            System.out.format("\n\nTime taken %d.%03d seconds\n", elapsed / 1000L, elapsed % 1000L);
+            final double time = elapsed / 1000.0 + (double)(elapsed % 1000L) / 1000.0;
+
+            System.out.format("\n\nTime taken %f seconds\n", time);
         } else {
             System.out.println("No solution exists");
         }
