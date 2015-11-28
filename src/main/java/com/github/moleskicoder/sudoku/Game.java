@@ -28,7 +28,7 @@ public final class Game {
 
             final long elapsed = finish - start;
 
-            final double time = elapsed / 1000.0 + (double)(elapsed % 1000L) / 1000.0;
+            final double time = (double)elapsed / 1000.0 + (double)(elapsed % 1000L) / 1000.0;
 
             System.out.format("\n\nTime taken %f seconds\n", time);
         } else {
