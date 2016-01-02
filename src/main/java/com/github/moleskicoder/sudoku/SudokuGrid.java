@@ -12,8 +12,8 @@ public final class SudokuGrid extends Grid<Integer> implements ISudokuGrid {
 
     public static final int UNASSIGNED = 0;
 
-    public static final int DIMENSION = 16;
-    public static final int BOX_DIMENSION = 4;
+    public static final int DIMENSION = 9;
+    public static final int BOX_DIMENSION = 3;
 
     private static final int CELL_COUNT = DIMENSION * DIMENSION;
     private static final int WIDTH = DIMENSION;
