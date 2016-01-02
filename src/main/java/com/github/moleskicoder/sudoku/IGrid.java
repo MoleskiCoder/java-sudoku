@@ -7,6 +7,8 @@ public interface IGrid<T> {
 
     void set(ICoordinate coordinate, T value);
     void set(int x, int y, T value);
+    void set(int offset, T value);
     T get(ICoordinate coordinate);
     T get(int x, int y);
+    T get(int offset);
 }

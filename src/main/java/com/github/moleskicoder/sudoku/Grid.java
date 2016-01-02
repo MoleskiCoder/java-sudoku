@@ -28,23 +28,32 @@ public class Grid<T> implements IGrid<T> {
 
     @Override
     public final void set(final ICoordinate coordinate, final T value) {
-        this.values[this.getOffset(coordinate)] = value;
+        this.set(this.getOffset(coordinate), value);
     }
 
     @Override
     public final void set(final int x, final int y, final T value) {
-        this.values[this.getOffset(x, y)] = value;
+        this.set(this.getOffset(x, y), value);
+    }
+
+    @Override
+    public final void set(final int offset, final T value) {
+        this.values[offset] = value;
     }
 
     @Override
     public final T get(final ICoordinate coordinate) {
-        return this.values[this.getOffset(coordinate)];
+        return this.get(this.getOffset(coordinate));
     }
 
     @Override
     public final T get(final int x, final int y) {
-        return this.values[this.getOffset(x, y)];
+        return this.get(this.getOffset(x, y));
+    }
 
+    @Override
+    public final T get(final int offset) {
+        return this.values[offset];
     }
 
     private int getOffset(final ICoordinate coordinate) {

@@ -1,5 +1,7 @@
 package com.github.moleskicoder.sudoku;
 
+import java.util.Set;
+
 /**
  * From: https://see.stanford.edu/materials/icspacs106b/H19-RecBacktrackExamples.pdf
  *
@@ -8,14 +10,20 @@ package com.github.moleskicoder.sudoku;
  */
 public final class Solver implements ISolver {
 
-    private final IGrid<Integer> grid;
+    private final ISudokuGrid grid;
     private final int width;
     private final int height;
 
-    public Solver(final IGrid<Integer> start) {
+    public Solver(final ISudokuGrid start) {
         this.grid = start;
         this.width = this.grid.getWidth();
         this.height = this.grid.getHeight();
+    }
+
+    @Override
+    public boolean solve() {
+        this.grid.eliminate();
+        return this.solve(0);
     }
 
     /*
@@ -32,59 +40,42 @@ public final class Solver implements ISolver {
      * been examined and none worked out, return false to backtrack to previous
      * decision point.
      */
-    @Override
-    public boolean solve() {
+    private boolean solve(final int index) {
 
-        final ICoordinate coordinate = new Coordinate();
-        if (!this.findUnassignedLocation(coordinate)) {
+        final int offset = this.grid.getOffset(index);
+
+        if (offset == -1) {
             return true; // success!
         }
-        for (int number = 1; number < 10; ++number) { // consider digits 1 to 9
-            if (this.isAvailable(coordinate, number)) { // if looks promising,
-                this.grid.set(coordinate, number); // make tentative assignment
-                if (this.solve()) {
+
+        final Set<Integer> numbers = this.grid.getPossibilities(offset);
+
+        final int x = offset % SudokuGrid.DIMENSION;
+        final int y = offset / SudokuGrid.DIMENSION;
+
+        for (final int number : numbers) {
+            if (this.isAvailable(x, y, number)) { // if looks promising,
+                this.grid.set(offset, number); // make tentative assignment
+                if (this.solve(index + 1)) {
                     return true; // recur, if success, yay!
                 }
-                this.grid.set(coordinate, SudokuGrid.UNASSIGNED); // failure, unmake & try again
             }
         }
+        this.grid.set(offset, SudokuGrid.UNASSIGNED); // failure, unmake & try again
         return false; // this triggers backtracking
     }
 
     /*
-     * Function: findUnassignedLocation
-     * --------------------------------
-     * Searches the grid to find an entry that is still unassigned. If found,
-     * the reference parameters row, column will be set the location that is
-     * unassigned, and true is returned. If no unassigned entries remain, false
-     * is returned.
+     * Function: isAvailable
+     * ---------------------
+     * Returns a boolean which indicates whether it will be legal to assign
+     * number to the given row,column location. As assignment is legal if it that
+     * number is not already used in the row, column, or box.
      */
-    private boolean findUnassignedLocation(final ICoordinate coordinate) {
-        for (int y = 0; y < this.height; ++y) {
-            coordinate.setY(y);
-            for (int x = 0; x < this.width; ++x) {
-                coordinate.setX(x);
-                if (this.grid.get(coordinate) == SudokuGrid.UNASSIGNED) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-/*
- * Function: isAvailable
- * ---------------------
- * Returns a boolean which indicates whether it will be legal to assign
- * number to the given row,column location. As assignment is legal if it that
- * number is not already used in the row, column, or box.
- */
-    private boolean isAvailable(final ICoordinate coordinate, final int number) {
-        final int x = coordinate.getX();
-        final int y = coordinate.getY();
+    private boolean isAvailable(final int x, final int y, final int number) {
         return !this.isUsedInRow(y, number)
             && !this.isUsedInColumn(x, number)
-            && !this.isUsedInBox(x - x % 3, y - y % 3, number);
+            && !this.isUsedInBox(x - x % SudokuGrid.BOX_DIMENSION, y - y % SudokuGrid.BOX_DIMENSION, number);
     }
 
     /*
@@ -94,10 +85,12 @@ public final class Solver implements ISolver {
      * in the specified row matches the given number.
      */
     private boolean isUsedInRow(final int y, final int number) {
+        int offset = y * SudokuGrid.DIMENSION;
         for (int x = 0; x < this.width; ++x) {
-            if (this.grid.get(x, y) == number) {
+            if (this.grid.get(offset) == number) {
                 return true;
             }
+            offset++;
         }
         return false;
     }
@@ -109,10 +102,12 @@ public final class Solver implements ISolver {
      * in the specified column matches the given number.
      */
     private boolean isUsedInColumn(final int x, final int number) {
+        int offset = x;
         for (int y = 0; y < this.height; ++y) {
-            if (this.grid.get(x, y) == number) {
+            if (this.grid.get(offset) == number) {
                 return true;
             }
+            offset += SudokuGrid.DIMENSION;
         }
         return false;
     }
@@ -124,11 +119,14 @@ public final class Solver implements ISolver {
      * within the specified 3x3 box matches the given number.
      */
     private boolean isUsedInBox(final int boxStartX, final int boxStartY, final int number) {
-        for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 3; ++x) {
-                if (this.grid.get(x + boxStartX, y + boxStartY) == number) {
+        for (int yOffset = 0; yOffset < SudokuGrid.BOX_DIMENSION; ++yOffset) {
+            final int y = yOffset + boxStartY;
+            int offset = boxStartX + y * SudokuGrid.DIMENSION;
+            for (int xOffset = 0; xOffset < SudokuGrid.BOX_DIMENSION; ++xOffset) {
+                if (this.grid.get(offset) == number) {
                     return true;
                 }
+                offset++;
             }
         }
         return false;

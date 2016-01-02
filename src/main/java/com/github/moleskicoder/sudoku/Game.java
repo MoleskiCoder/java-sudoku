@@ -17,7 +17,7 @@ public final class Game {
                 0, 9, 0, 0, 0, 0, 4, 0, 0
         };
 
-        final IGrid<Integer> puzzle = new SudokuGrid(data);
+        final ISudokuGrid puzzle = new SudokuGrid(data);
         final ISolver solver = new Solver(puzzle);
 
         final long start = System.currentTimeMillis();
